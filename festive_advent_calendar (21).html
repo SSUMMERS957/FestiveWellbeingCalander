@@ -1,0 +1,225 @@
+<!doctype html>\n<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Festive Advent Calendar</title>
+<style>
+  :root{
+    --bg1:#ffebe6; --bg2:#ff9aa2; --card:#fff; --accent:#8b0000;
+  }
+  html,body{height:100%;margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  body{
+    background: linear-gradient(180deg,var(--bg1),var(--bg2));
+    display:flex;align-items:center;justify-content:center;padding:30px;
+  }
+  .container{width:100%;max-width:1200px}
+  h1{text-align:center;font-size:2.25rem;margin:0 0 18px;color:var(--accent)}
+  .controls{display:flex;gap:10px;justify-content:center;margin-bottom:12px}
+  .btn{background:var(--card);border-radius:9999px;padding:8px 14px;border:0;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.08)}
+  .grid{display:grid;gap:12px;grid-template-columns:repeat(6,1fr)}
+  @media(max-width:900px){.grid{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:480px){.grid{grid-template-columns:repeat(2,1fr)}}
+  .tile{
+    background:linear-gradient(180deg,#ffffff,#fff6f6);
+    border-radius:18px;padding:18px;min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    box-shadow:0 8px 24px rgba(0,0,0,.08);cursor:pointer;position:relative;overflow:hidden;transition:transform .18s, box-shadow .18s;
+  }
+  .tile:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 18px 34px rgba(0,0,0,.12)}
+  .daynum{font-weight:700;font-size:1.25rem;color:var(--accent)}
+  .openContent{position:absolute;inset:0;background:rgba(255,255,255,.98);padding:16px;border-radius:18px;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:8px;transform:translateY(8px);opacity:0;pointer-events:none;transition:opacity .18s, transform .18s}
+  .tile.open .openContent{opacity:1;transform:none;pointer-events:auto}
+  .fact{font-size:0.95rem}
+  .try{font-size:0.9rem;color:#555}
+  /* Modal (large view) */
+  .modalBackdrop{position:fixed;inset:0;background:linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.4));display:flex;align-items:center;justify-content:center;z-index:40}
+  .modal{background:white;border-radius:14px;padding:22px;max-width:720px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.35);transform:translateY(12px);animation:pop .18s ease-out}
+  @keyframes pop{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}
+  .modal h2{margin:0 0 8px;color:var(--accent)}
+  .modal p{margin:6px 0}
+  /* Snowflakes */
+  .snow{pointer-events:none;position:fixed;inset:0;z-index:5;overflow:hidden}
+  .flake{position:absolute;top:-10%;opacity:.9;font-size:18px;user-select:none;animation:fall linear infinite}
+  @keyframes fall{
+    to{transform:translateY(120vh) rotate(360deg)}
+  }
+  /* small festive glow */
+  .glow{box-shadow:0 0 18px rgba(255,255,255,.6) inset}
+  .mute{opacity:.8}
+  footer{margin-top:14px;text-align:center;font-size:0.9rem;color:#4b2a2a}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🎄 Festive Advent Calendar</h1>
+  <div class="controls" aria-hidden="false">
+    <button id="muteBtn" class="btn">🔊 Sound: On</button>
+    <button id="downloadBtn" class="btn">⬇️ Download HTML</button>
+  </div>
+
+  <div id="grid" class="grid" aria-live="polite"><div class="tile" tabindex="0" role="button"><div class="daynum">Day 1</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">Monday 1st December</div></div><div class="tile" tabindex="0" role="button"><div class="daynum">Day 2</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">Tuesday 2nd December</div></div><div class="tile" tabindex="0" role="button"><div class="daynum">Day 3</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">Wednesday 3rd December</div></div><div class="tile" tabindex="0" role="button"><div class="daynum">Day 4</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">Thursday 4th December</div></div><div class="tile" tabindex="0" role="button"><div class="daynum">Day 5</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">Friday 5th December</div></div><div class="tile" tabindex="0" role="button"><div class="daynum">Day 6</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">Monday 8th December</div></div><div class="tile" tabindex="0" role="button"><div class="daynum">Day 7</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">Tuesday 9th December</div></div><div class="tile" tabindex="0" role="button"><div class="daynum">Day 8</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">Wednesday 10th December</div></div><div class="tile" tabindex="0" role="button"><div class="daynum">Day 9</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">Thursday 11th December</div></div><div class="tile" tabindex="0" role="button"><div class="daynum">Day 10</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">Friday 12th December</div></div><div class="tile" tabindex="0" role="button"><div class="daynum">Day 11</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">Monday 15th December</div></div><div class="tile" tabindex="0" role="button"><div class="daynum">Day 12</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">Tuesday 16th December</div></div><div class="tile" tabindex="0" role="button"><div class="daynum">Day 13</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">Wednesday 17th December</div></div><div class="tile" tabindex="0" role="button"><div class="daynum">Day 14</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">Thursday 18th December</div></div><div class="tile" tabindex="0" role="button"><div class="daynum">Day 15</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">Friday 19th December</div></div><div class="tile" tabindex="0" role="button"><div class="daynum">Day 16</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">Monday 22nd December</div></div><div class="tile" tabindex="0" role="button"><div class="daynum">Day 17</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">Tuesday 23rd December</div></div><div class="tile" tabindex="0" role="button"><div class="daynum">Day 18</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">Wednesday 24th December</div></div><div class="tile" tabindex="0" role="button"><div class="daynum">Day 19</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">Thursday 25th December</div></div><div class="tile" tabindex="0" role="button"><div class="daynum">Day 20</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">Friday 26th December</div></div><div class="tile" tabindex="0" role="button"><div class="daynum">Day 21</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">Monday 29th December</div></div><div class="tile" tabindex="0" role="button"><div class="daynum">Day 22</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">Tuesday 30th December</div></div><div class="tile" tabindex="0" role="button"><div class="daynum">Day 23</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">Wednesday 31st December</div></div><div class="tile" tabindex="0" role="button"><div class="daynum">Day 24</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">Thursday 1st January</div></div></div>
+
+  <footer>Click a day to open it — enjoy the little festive surprise!</footer>
+</div>
+
+<!-- Snow container -->
+<div id="snow" class="snow" aria-hidden="true"><div class="flake" style="left: 23.2516%; font-size: 16.0277px; opacity: 0.660202; animation-duration: 10.6829s; animation-delay: -0.689186s;">❆</div><div class="flake" style="left: 36.4594%; font-size: 19.6701px; opacity: 0.954695; animation-duration: 10.2567s; animation-delay: -5.31603s;">❆</div><div class="flake" style="left: 46.6407%; font-size: 10.0252px; opacity: 0.815523; animation-duration: 7.7081s; animation-delay: -2.21279s;">❆</div><div class="flake" style="left: 94.8855%; font-size: 17.9899px; opacity: 0.901544; animation-duration: 7.96609s; animation-delay: -1.68974s;">❆</div><div class="flake" style="left: 66.3572%; font-size: 27.729px; opacity: 0.93038; animation-duration: 15.1669s; animation-delay: -0.0958088s;">❆</div><div class="flake" style="left: 97.0817%; font-size: 9.01848px; opacity: 0.770947; animation-duration: 14.052s; animation-delay: -9.71933s;">❆</div><div class="flake" style="left: 85.0755%; font-size: 22.1715px; opacity: 0.660885; animation-duration: 6.44261s; animation-delay: -0.613874s;">❆</div><div class="flake" style="left: 18.0969%; font-size: 12.0712px; opacity: 0.925665; animation-duration: 13.3874s; animation-delay: -7.0452s;">❆</div><div class="flake" style="left: 56.081%; font-size: 24.7755px; opacity: 0.941905; animation-duration: 15.1872s; animation-delay: -3.49335s;">❆</div><div class="flake" style="left: 97.5857%; font-size: 25.232px; opacity: 0.81945; animation-duration: 9.27679s; animation-delay: -1.32946s;">❆</div><div class="flake" style="left: 74.069%; font-size: 16.8463px; opacity: 0.96321; animation-duration: 14.2801s; animation-delay: -4.26733s;">❆</div><div class="flake" style="left: 71.7018%; font-size: 21.7806px; opacity: 0.607463; animation-duration: 7.3886s; animation-delay: -6.00591s;">❆</div><div class="flake" style="left: 29.8677%; font-size: 21.2715px; opacity: 0.978125; animation-duration: 6.84588s; animation-delay: -4.42193s;">❆</div><div class="flake" style="left: 43.7226%; font-size: 27.3899px; opacity: 0.818079; animation-duration: 12.4904s; animation-delay: -4.83003s;">❆</div><div class="flake" style="left: 93.6509%; font-size: 14.7686px; opacity: 0.920301; animation-duration: 13.3513s; animation-delay: -0.0476902s;">❆</div><div class="flake" style="left: 41.5751%; font-size: 20.2718px; opacity: 0.761822; animation-duration: 6.52014s; animation-delay: -2.79737s;">❆</div><div class="flake" style="left: 45.4006%; font-size: 12.9821px; opacity: 0.93207; animation-duration: 7.02464s; animation-delay: -1.73998s;">❆</div><div class="flake" style="left: 92.6766%; font-size: 13.8551px; opacity: 0.866926; animation-duration: 10.5336s; animation-delay: -9.32768s;">❆</div><div class="flake" style="left: 72.0862%; font-size: 22.2088px; opacity: 0.757374; animation-duration: 10.596s; animation-delay: -2.16842s;">❆</div><div class="flake" style="left: 21.6905%; font-size: 24.0181px; opacity: 0.886058; animation-duration: 13.0295s; animation-delay: -1.19636s;">❆</div><div class="flake" style="left: 97.2422%; font-size: 27.7103px; opacity: 0.646538; animation-duration: 8.8579s; animation-delay: -9.02371s;">❆</div><div class="flake" style="left: 77.0323%; font-size: 23.162px; opacity: 0.857892; animation-duration: 9.8052s; animation-delay: -9.1431s;">❆</div><div class="flake" style="left: 64.9431%; font-size: 20.9813px; opacity: 0.74369; animation-duration: 15.4391s; animation-delay: -2.00078s;">❆</div><div class="flake" style="left: 10.3079%; font-size: 21.3362px; opacity: 0.944646; animation-duration: 8.25901s; animation-delay: -4.93352s;">❆</div><div class="flake" style="left: 57.8743%; font-size: 17.515px; opacity: 0.978773; animation-duration: 7.0321s; animation-delay: -1.75456s;">❆</div><div class="flake" style="left: 15.103%; font-size: 11.879px; opacity: 0.972694; animation-duration: 6.43562s; animation-delay: -0.696473s;">❆</div><div class="flake" style="left: 51.9272%; font-size: 16.9969px; opacity: 0.854166; animation-duration: 14.8548s; animation-delay: -7.74089s;">❆</div><div class="flake" style="left: 34.8069%; font-size: 25.0991px; opacity: 0.814149; animation-duration: 7.17175s; animation-delay: -1.0206s;">❆</div></div>
+
+<!-- Modal container -->
+<div id="modalRoot"></div>
+
+<script>
+/* --- Data for days (user-provided first 12, then mental wellbeing tips) --- */
+const days = [
+{day:1,title:"Monday 1st December",fact:"Exercising in groups improves motivation and consistency.",try:"Join our staff Zoom class or get together as a team for the January staff walking challenge."},
+{day:2,title:"Tuesday 2nd December",fact:"Research shows that interval training workouts can burn between 300 and 600 calories per 30-minute session.",try:"If you're short on time try interval training — alternate high and low intensity with short rests."},
+{day:3,title:"Wednesday 3rd December",fact:"Regular movement supports digestive health.",try:"Take a short walk during lunch or choose the longest route to the kettle/coffee."},
+{day:4,title:"Thursday 4th December",fact:"Squats are a highly effective compound movement for lower-body strength.",try:"Each time you stand from your desk do 10 sit-to-stands; hover briefly to increase difficulty."},
+{day:5,title:"Friday 5th December",fact:"Choosing the stairs over the lift for 6 weeks improves leg strength and cardio fitness.",try:"Get out one floor early and walk the final flight; increase as you get fitter."},
+{day:6,title:"Monday 8th December",fact:"4×30s wall-sits or planks daily is effective for reducing raised blood pressure.",try:"Do wall-sits while the kettle boils or your lunch heats."},
+{day:7,title:"Tuesday 9th December",fact:"20 minutes of exercise can boost memory and concentration.",try:"Take a brisk 10-minute walk before or after work to clear your mind."},
+{day:8,title:"Wednesday 10th December",fact:"Walking 15 minutes a day can reduce heart disease risk by up to 35%.",try:"Park further away or get off public transport one stop early."},
+{day:9,title:"Thursday 11th December",fact:"Exercise fuels creativity — movement stimulates brain chemicals linked to creative thinking.",try:"Take walking meetings when possible."},
+{day:10,title:"Friday 12th December",fact:"Exercise is strongly linked to improved wellbeing and mood.",try:"Block out 10–15 minutes for a quick stretch or desk workout."},
+{day:11,title:"Monday 15th December",fact:"WHO recommends 150 minutes of moderate activity weekly — just 22 minutes a day.",try:"Break into three short sessions (eg three 8-minute bursts)."},
+{day:12,title:"Tuesday 16th December",fact:"Movement builds resilience and strengthens the immune system.",try:"Try 10 squats, 10 lunges and a 20-second stretch as a morning routine."},
+{day:13,title:"Wednesday 17th December",fact:"Deep breathing reduces stress.",try:"Try a 4-2-6 breathing cycle for two minutes."},
+{day:14,title:"Thursday 18th December",fact:"Gratitude boosts mood and resilience.",try:"Write down three things you are grateful for before work."},
+{day:15,title:"Friday 19th December",fact:"Short breaks restore focus.",try:"Stand up, stretch, and roll shoulders for a 30-second micro-break."},
+{day:16,title:"Monday 22nd December",fact:"Nature improves clarity and reduces stress.",try:"Spend five minutes outside — fresh air counts."},
+{day:17,title:"Tuesday 23rd December",fact:"Social connection protects mental wellbeing.",try:"Message a colleague or friend you haven't spoken to recently."},
+{day:18,title:"Wednesday 24th December",fact:"Music can shift your emotional state.",try:"Play a favourite song to uplift or to help focus."},
+{day:19,title:"Thursday 25th December",fact:"Setting boundaries prevents burnout.",try:"Pick one task to complete without multitasking today."},
+{day:20,title:"Friday 26th December",fact:"Kindness increases serotonin and reduces stress.",try:"Do one small kind act — a compliment, a held door, or an offer of help."},
+{day:21,title:"Monday 29th December",fact:"Mindfulness reduces anxiety and improves attention.",try:"Spend one minute noticing sounds and sensations — no judgement."},
+{day:22,title:"Tuesday 30th December",fact:"Hydration affects mental performance and energy.",try:"Have a glass of water before your next meeting or task."},
+{day:23,title:"Wednesday 31st December",fact:"Decluttering your workspace lightens mental load.",try:"Tidy one drawer or one folder."},
+{day:24,title:"Thursday 1st January",fact:"Reflecting builds meaning and optimism.",try:"Write one highlight from last month and one intention for the new year."}
+];
+
+/* --- Create grid tiles --- */
+const grid = document.getElementById('grid');
+
+days.forEach(d => {
+  const el = document.createElement('div');
+  el.className = 'tile';
+  el.tabIndex = 0;
+  el.setAttribute('role','button');
+  el.innerHTML = `<div class="daynum">Day ${d.day}</div><div style="font-size:12px;margin-top:6px;color:#7b3a3a">${d.title}</div>`;
+  el.addEventListener('click', () => openDay(d, el));
+  el.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') openDay(d, el) });
+  grid.appendChild(el);
+});
+
+/* --- Modal --- */
+const modalRoot = document.getElementById('modalRoot');
+
+function openDay(d, tileEl){
+  // play sound
+  if(!isMuted) playOpenSound();
+  // small tile open
+  tileEl.classList.add('open');
+  setTimeout(()=> tileEl.classList.remove('open'), 800);
+
+  // render modal
+  const backdrop = document.createElement('div');
+  backdrop.className = 'modalBackdrop';
+  backdrop.innerHTML = `
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Day ${d.day} details">
+      <h2>Day ${d.day} — ${d.title}</h2>
+      <p class="fact"><strong>Fact:</strong> ${escapeHtml(d.fact)}</p>
+      <p class="try"><strong>Try this:</strong> ${escapeHtml(d.try)}</p>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:12px">
+        <button id="closeBtn" class="btn">Close</button>
+        <button id="shareBtn" class="btn">Copy Text</button>
+      </div>
+    </div>
+  `;
+  backdrop.querySelector('#closeBtn').addEventListener('click', ()=> { backdrop.remove(); });
+  backdrop.addEventListener('click', (e)=> { if(e.target===backdrop) backdrop.remove(); });
+  backdrop.querySelector('#shareBtn').addEventListener('click', ()=> {
+    const txt = `Day ${d.day} - ${d.title}\\nFact: ${d.fact}\\nTry this: ${d.try}`;
+    navigator.clipboard?.writeText(txt).then(()=> alert('Copied to clipboard!'), ()=> alert('Could not copy'));
+  });
+  modalRoot.appendChild(backdrop);
+}
+
+/* --- Utility to escape HTML insertion --- */
+function escapeHtml(str){ return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* --- Sound: Web Audio bell-ish sound (no external file needed) --- */
+let audioCtx = null;
+function playOpenSound(){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const now = audioCtx.currentTime;
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(880, now);
+    o.frequency.exponentialRampToValueAtTime(440, now + 0.35);
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(0.6, now + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(now); o.stop(now + 0.7);
+    // small overtones
+    const o2 = audioCtx.createOscillator();
+    const g2 = audioCtx.createGain();
+    o2.type = 'triangle';
+    o2.frequency.setValueAtTime(1320, now);
+    g2.gain.setValueAtTime(0.0001, now);
+    g2.gain.exponentialRampToValueAtTime(0.22, now + 0.02);
+    g2.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+    o2.connect(g2); g2.connect(audioCtx.destination);
+    o2.start(now); o2.stop(now + 0.6);
+  }catch(e){
+    console.warn('Audio play failed', e);
+  }
+}
+
+/* --- Mute control --- */
+let isMuted = false;
+const muteBtn = document.getElementById('muteBtn');
+muteBtn.addEventListener('click', ()=> {
+  isMuted = !isMuted;
+  muteBtn.textContent = isMuted ? '🔇 Sound: Off' : '🔊 Sound: On';
+});
+
+/* --- Simple snow generator --- */
+const snowRoot = document.getElementById('snow');
+function makeFlake(i){
+  const el = document.createElement('div');
+  el.className = 'flake';
+  el.style.left = (Math.random()*100)+'%';
+  const size = (8 + Math.random()*20);
+  el.style.fontSize = size + 'px';
+  el.style.opacity = (0.6 + Math.random()*0.4);
+  el.style.animationDuration = (6 + Math.random()*10) + 's';
+  el.style.animationDelay = (Math.random()*-10) + 's';
+  el.textContent = '❆';
+  snowRoot.appendChild(el);
+}
+for(let i=0;i<28;i++) makeFlake(i);
+
+/* --- Download the current HTML as a file --- */
+const downloadBtn = document.getElementById('downloadBtn');
+downloadBtn.addEventListener('click', ()=> {
+  const fileContent = `<!doctype html>\\n${document.documentElement.outerHTML}`;
+  const blob = new Blob([fileContent], {type: 'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'festive_advent_calendar.html';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+});
+
+/* Accessibility: focus outline */
+document.addEventListener('keyup', e => {
+  if(e.key === 'Tab') document.body.classList.add('showFocus');
+});
+</script>
+
+
+</body></html>
